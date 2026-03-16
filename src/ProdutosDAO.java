@@ -47,9 +47,6 @@ public class ProdutosDAO {
         }   
     }
     
-             
-        
-    
     public ArrayList<ProdutosDTO> listarProdutos(){
         String sql = "SELECT * FROM `produtos`";             
               try {
@@ -78,8 +75,70 @@ public class ProdutosDAO {
                 }
     }
     
-    
-    
+    public ProdutosDTO get(int id){
+        try {
+            ProdutosDTO produto = new ProdutosDTO();
+            prep = conn.prepareStatement("SELECT * from produto WHERE id = ?");
+            prep.setInt(1,id);
+            resultset = prep.executeQuery();
+            
+            if(resultset.next()){ 
+                        produto.setId(resultset.getInt("id"));
+                        produto.setNome(resultset.getString("nome"));
+                        produto.setValor(resultset.getInt("valor"));
+                        produto.setStatus(resultset.getString("status"));
+                return produto;
+            }else{
+                return null;
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao conectar: " + ex.getMessage());
+            return null;
+        }
         
-}
+    }
+        
+        public void venderProduto(int id){
+            try {
+            prep = conn.prepareStatement("UPDATE produtos SET status = ? where id = ? ");
+            prep.setString(1,"Vendido");
+            prep.setInt(2,id);
+            prep.executeUpdate();
+      
+        } catch (SQLException ex) {
+            System.out.println("Erro ao conectar: " + ex.getMessage());
+            
+        }
+        }
+        
+        public ArrayList listarProdutosVendidos(){
+             String sql = "SELECT * FROM produtos where status = ?";             
+              try {
+                    PreparedStatement stmt = this.conn.prepareStatement(sql);
+                    stmt.setString(1,"Vendido");
+                    
+                    ResultSet rs = stmt.executeQuery();   
+                    
+                    ArrayList<ProdutosDTO> lista = new ArrayList<>();
+                    while (rs.next()) {
+                         ProdutosDTO produto = new ProdutosDTO();
+                         
+                        
+                        produto.setId(rs.getInt("id"));
+                        produto.setNome(rs.getString("nome"));
+                        produto.setValor(rs.getInt("valor"));
+                        produto.setStatus(rs.getString("status"));
+                        
+                        lista.add(produto);    
+                    }
+                    return lista;
+                    
+                } catch (Exception e) {
+                    System.out.println("Erro na lista: " + e.getMessage());
+                    return null;
+                }
+        }
+    }
+    
+       
 
