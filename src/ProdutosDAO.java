@@ -47,9 +47,6 @@ public class ProdutosDAO {
         }   
     }
     
-             
-        
-    
     public ArrayList<ProdutosDTO> listarProdutos(){
         String sql = "SELECT * FROM `produtos`";             
               try {
@@ -78,8 +75,42 @@ public class ProdutosDAO {
                 }
     }
     
-    
-    
+    public ProdutosDTO get(int id){
+        try {
+            ProdutosDTO produto = new ProdutosDTO();
+            prep = conn.prepareStatement("SELECT * from produto WHERE id = ?");
+            prep.setInt(1,id);
+            resultset = prep.executeQuery();
+            
+            if(resultset.next()){ 
+                        produto.setId(resultset.getInt("id"));
+                        produto.setNome(resultset.getString("nome"));
+                        produto.setValor(resultset.getInt("valor"));
+                        produto.setStatus(resultset.getString("status"));
+                return produto;
+            }else{
+                return null;
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao conectar: " + ex.getMessage());
+            return null;
+        }
         
-}
+    }
+        
+        public void venderProduto(int id){
+            try {
+            prep = conn.prepareStatement("UPDATE produtos SET status = ? where id = ? ");
+            prep.setString(1,"Vendido");
+            prep.setInt(2,id);
+            prep.executeUpdate();
+      
+        } catch (SQLException ex) {
+            System.out.println("Erro ao conectar: " + ex.getMessage());
+            
+        }
+        }
+    }
+    
+       
 
